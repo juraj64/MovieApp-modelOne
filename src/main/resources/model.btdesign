@@ -29,7 +29,6 @@ Application MovieApp {
             String lastName;
             Date dateOfBirth;
             String nationality;
-            //-List<@Movie> movies <-> director inverse;
 
             Repository DirectorRepository {
                 findByCondition;
@@ -42,7 +41,6 @@ Application MovieApp {
             String lastName;
             -@Gender gender nullable;
             Date dateOfBirth;
-            //-List<@Movie> movies <-> actor inverse;
 
             Repository ActorRepository {
                 findByCondition;
