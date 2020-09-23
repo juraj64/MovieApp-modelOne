@@ -1,0 +1,100 @@
+Application MovieApp {
+    basePackage=com.jurajlazovy
+
+    Module web {
+
+        Resource FrontResource {
+            String front return="front/overview";
+        }
+
+        Resource DirectorResource {
+            scaffold
+        }
+
+        Resource ActorResource {
+            scaffold
+        }
+
+        Resource MovieResource {
+            scaffold
+        }
+
+    }
+
+    Module movies {
+
+        Entity Director {
+            scaffold
+            String firstName;
+            String lastName;
+            Date dateOfBirth;
+            String nationality;
+            //-List<@Movie> movies <-> director inverse;
+
+            Repository DirectorRepository {
+                findByCondition;
+            }
+         }
+
+        Entity Actor {
+            scaffold
+            String firstName;
+            String lastName;
+            -@Gender gender nullable;
+            Date dateOfBirth;
+            //-List<@Movie> movies <-> actor inverse;
+
+            Repository ActorRepository {
+                findByCondition;
+            }
+        }
+
+        enum Gender {
+            M, F;
+        }
+
+        Entity Movie {
+            scaffold
+            String movieName;
+            int movieLength;
+            String movieLang;
+            Date releaseDate;
+            String ageCertificate;
+            int domesticTakings;
+            int internationalTakings;
+            -@Director director;
+            -List<@Actor> actors;
+
+            Repository MovieRepository {
+               findByCondition;
+            }
+        }
+
+
+        Service DirectorService {
+            List<@Director> findDirectorsByCondition();
+            List<@Director> findDirectorsByBirth(Date dateOfBirth);
+            List<@Director> findAllDirectorsOrdered();
+            List<@Director> findRussianDirectors();
+            List<@Director> findDirectorsByNationality(String nationality);
+            findByCondition => DirectorRepository.findByCondition;
+        }
+
+        Service ActorService {
+            List<@Actor> findActorsByCondition();
+            List<@Actor> findActorsByGender(@Gender gender);
+            findByCondition => ActorRepository.findByCondition;
+        }
+
+        Service MovieService {
+            List<@Movie> findMoviesByCondition();
+            List<@Movie> showMoviesWithActors();
+            List<@Movie> findMoviesByDirector(@Director director);
+            List<@Movie> findMoviesByDirectorName(String firstName, String lastName);
+            List<@Movie> findMoviesByActor(String firstName, String lastName);
+            List<@Movie> findMoviesByLanguages();
+            List<@Movie> findAllMovies();
+            findByCondition => MovieRepository.findByCondition;
+        }
+    }
+}

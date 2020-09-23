@@ -1,0 +1,262 @@
+Application Movies {
+    basePackage=com.jurajlazovy
+
+    Module web {
+
+        Resource FrontResource {
+            String front return="front/overview";
+        }
+
+        Resource DirectorResource {
+            scaffold
+        }
+
+        Resource ActorResource {
+            scaffold
+        }
+
+        Resource MovieResource {
+            scaffold
+        }
+
+        Resource MovieRevenueResource {
+            scaffold
+        }
+
+        Resource MovieActorResource {
+            scaffold
+        }
+
+    }
+
+    Module movies {
+
+        Entity Director {
+            scaffold
+            String firstName;
+            String lastName;
+            Date dateOfBirth;
+            String nationality;
+
+            Repository DirectorRepository {
+                findByCondition;
+            }
+         }
+
+        Entity Actor {
+            scaffold
+            String firstName;
+            String lastName;
+            -@Gender gender nullable;
+            Date dateOfBirth;
+
+            Repository ActorRepository {
+                findByCondition;
+            }
+        }
+
+        enum Gender {
+            M, F;
+        }
+
+        Entity Movie {
+            scaffold
+            String movieName;
+            int movieLength;
+            String movieLang;
+            Date releaseDate;
+            String ageCertificate;
+            //- @Director director;
+
+            Repository MovieRepository {
+               findByCondition;
+            }
+        }
+
+        Entity MovieRevenue {
+            scaffold
+            //- @Movie movie;
+            int domesticTakings;
+            int internationalTakings;
+
+            Repository MovieRevenueRepository {
+                findByCondition;
+            }
+        }
+
+        Entity MovieActor {
+             scaffold
+             //- @Movie movie;
+             //- @Actor actor;
+
+             Repository MovieActorRepository {
+                 findByCondition;
+             }
+        }
+
+        Service DirectorService {
+            List<@Director> findDirectorsByCondition();
+            findByCondition => DirectorRepository.findByCondition;
+        }
+
+        Service ActorService {
+            List<@Actor> findActorsByCondition();
+            findByCondition => ActorRepository.findByCondition;
+        }
+
+        Service MovieService {
+            List<@Movie> findMoviesByCondition();
+            findByCondition => MovieRepository.findByCondition;
+        }
+
+        Service MovieRevenueService {
+            List<@MovieRevenue> findMovieRevenuesByCondition();
+            findByCondition => MovieRevenueRepository.findByCondition;
+        }
+
+        Service MovieActorService {
+            List<@MovieActor> findMoviesActorsByCondition();
+            findByCondition => MovieActorRepository.findByCondition;
+        }
+    }
+}
+
+Application BusApp {
+    basePackage=com.jurajlazovy
+
+    Module web {
+
+        Resource FrontResource {
+            String front return="front/overview";
+        }
+
+        Resource DriverResource {
+            scaffold
+        }
+
+        Resource BusResource {
+            scaffold
+        }
+
+        Resource SeatResource {
+            scaffold
+        }
+
+        Resource BusConnectionResource {
+            scaffold
+        }
+
+    }
+
+    Module bus {
+
+        Entity Driver {
+            scaffold
+            String name
+            int age
+            -List<@BusConnection> connections <-> driver inverse;
+
+            Repository DriverRepository {
+                findByCondition;
+            }
+         }
+
+        Entity Bus {
+            scaffold
+            int busNum; // verzia bez key
+            String busSpz;
+            int numberOfSeats;
+
+            Repository BusRepository {
+                findByCondition;
+            }
+        }
+
+
+        Entity Seat {
+            scaffold
+            int seatNo;
+            -@SeatStatus seatStatus nullable;
+            Timestamp reservationDate;
+            String reservationKey;
+            -@BusConnection direction <-> seats cascade="persist,merge";
+
+            Repository SeatRepository {
+                 findByCondition;
+            }
+        }
+
+        enum SeatStatus {
+        Free, Reserved, Paid;
+        }
+
+        Entity BusConnection {
+            scaffold
+            String destination;
+            int minSeats;
+            int startHours;
+            int startMinutes;
+            int durationMinutes;
+            - @Driver driver <-> connections cascade="persist,merge";
+            - @Bus bus;
+            - List<@Seat> seats <-> direction inverse;
+
+            Repository BusConnectionRepository {
+                findByCondition;
+            }
+        }
+
+
+        Service BusConnectionService {
+        // Najdi volny autobus a najdi volneho vodica tak ze
+        // - Autobus nemoze byt na inej linke
+        // - Vodic moze robit max 12 hodin potom musi 12 hodin oddychovat
+        // - Vodic musi mat oddych od predchadzajuceho spoja minimalne 10 minut
+        // - Treba vyrobit aj Seats v pocte Bus.numberOfSeats
+        @BusConnection makeConnection(String destination, int minSeats, int startHours,
+        int startMinutes, int durationMinutes) throws NoneFreeBusOrDriver;
+
+        // Prescanuje vsetky sedadla vsetkych autobusov a ak je rezervacia starsia ako 10 minut tak ju zrusi
+        freeReservedSeats();
+
+        // Najdi BusConnections podla zadanych kriterii (alternativa SELECT)
+        List<@BusConnection> findBusConnectionsByCondition();
+        List<@BusConnection> findBusConnectionsJoinByCondition(); // SELECT join prikaz
+        findByCondition => BusConnectionRepository.findByCondition; // toto tam musi byt kvoli tejto service
+        }
+
+        Service SeatService {
+        // Rezervuj sedadlo, ak je obsadene (Paid) alebo bolo rezervovane pred menej ako 10 minutami vyhod exception SeatAlreadyReserved
+        // To znamena ak je sice rezervovane ale dlhsie ako 10 minut vygeneruj novy kluc a urob novu rezervaciu
+        // Ak je mozne rezervovat sedadlo vygeneruj 8 miestne cislo ktore nemoze zacinat 0 a vrat ako navratovu hodnotu - key
+        String reserveSeat(@BusConnection direction, int seatNum) throws SeatAlreadyReserved;
+
+        // Potvrd rezervaciu po zaplateni
+        // Ak je sedadlo Free tak rezervuj rovno bez kontroly kluca
+        // Ak je rezervovane skontroluj kluc, ak sedi kluc daj do stavu Paid inac vrat chybu WrongKey
+        String confirmSeat(@BusConnection direction, int seatNum, String reservationKey) throws WrongKey;
+
+        // Najdi Seats podla zadanych kriterii (alternativa SELECT)
+        List<@Seat> findSeatsByCondition(int seatNo, String reservationKey);
+        List<@Seat> findSeatsByConditionTwo(); // Alternativny select
+        List<@Seat> findSeatsJoinByCondition(int seatNo); // SELECT join prikaz
+        findByCondition => SeatRepository.findByCondition; // toto tam musi byt kvoli tejto service
+        }
+
+        Service DriverService {
+        List<@Driver> findDriversByCondition(); // Najdi driverov podla zadanych kriterii (alternativa SELECT)
+        List<@Driver> findDriversByConditionTwo(int age); // Alternativny select
+        findByCondition => DriverRepository.findByCondition; // toto tam musi byt kvoli tejto service
+        }
+
+        Service BusService {
+        List<@Bus> findBusesByCondition(int numberOfSeats); // Najdi Buses podla zadanych kriterii (alternativa SELECT)
+        findByCondition => BusRepository.findByCondition; // toto tam musi byt kvoli tejto service
+        }
+
+
+    }
+}
+
+
+
