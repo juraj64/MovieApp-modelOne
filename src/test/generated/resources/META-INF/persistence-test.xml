@@ -3,8 +3,8 @@
 			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 			 version="2.0">
-	<persistence-unit name="MovieAppmodelOneEntityManagerFactory">
-		<description>JPA configuration for MovieAppmodelOne </description>
+	<persistence-unit name="MovieAppEntityManagerFactory">
+		<description>JPA configuration for MovieApp </description>
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<!-- annotated classes -->
 		<class>com.jurajlazovy.movies.domain.Actor</class>

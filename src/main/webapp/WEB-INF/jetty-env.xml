@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
-<New id="MovieAppmodelOneDS" class="org.eclipse.jetty.plus.jndi.Resource">
-	<Arg>jdbc/MovieAppmodelOneDS</Arg>
+<New id="MovieAppDS" class="org.eclipse.jetty.plus.jndi.Resource">
+	<Arg>jdbc/MovieAppDS</Arg>
 	<Arg>
 		<New class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<Set name="DriverClassName">org.postgresql.Driver</Set>
-		<Set name="Url">jdbc:postgresql://localhost/movieappmodelone</Set>
+		<Set name="Url">jdbc:postgresql://localhost/movieapp</Set>
 		<Set name="Username">root</Set>
 		<Set name="Password">root</Set>
 		</New>

@@ -97,13 +97,13 @@ public class ActorRepositoryImpl implements ActorRepository {
 		ao.execute();
 	}
 
-	@PersistenceContext(unitName = "MovieAppmodelOneEntityManagerFactory")
+	@PersistenceContext(unitName = "MovieAppEntityManagerFactory")
 	private EntityManager entityManager;
 
 	/**
 	 * Dependency injection
 	 */
-	@PersistenceContext(unitName = "MovieAppmodelOneEntityManagerFactory")
+	@PersistenceContext(unitName = "MovieAppEntityManagerFactory")
 	protected void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}

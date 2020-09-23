@@ -20,7 +20,7 @@
 
 	<bean id="hsqldbDataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-		<property name="url" value="jdbc:hsqldb:mem:movieAppmodelOne"/>
+		<property name="url" value="jdbc:hsqldb:mem:movieApp"/>
 		<property name="username" value="sa"/>
 		<property name="password" value=""/>
 	</bean>

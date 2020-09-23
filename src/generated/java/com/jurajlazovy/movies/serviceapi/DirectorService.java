@@ -2,6 +2,8 @@ package com.jurajlazovy.movies.serviceapi;
 
 import com.jurajlazovy.movies.domain.Director;
 import com.jurajlazovy.movies.exception.DirectorNotFoundException;
+
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
@@ -14,7 +16,7 @@ public interface DirectorService {
 
 	public final static String BEAN_ID = "directorService";
 
-	public List<Director> findDirectorsByCondition(ServiceContext ctx);
+	public List<Director> findDirectorsByCondition(ServiceContext ctx) throws ParseException;
 
 	public List<Director> findDirectorsByBirth(ServiceContext ctx, Date dateOfBirth);
 

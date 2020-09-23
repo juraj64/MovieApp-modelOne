@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="148-Sculptor-movies" />
+        <module name="148-Sculptor-movieApp-modelOne" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="148-Sculptor-movies" target="1.8" />
+      <module name="148-Sculptor-movieApp-modelOne" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
